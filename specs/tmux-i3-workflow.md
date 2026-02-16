@@ -2,7 +2,7 @@
 
 ## Metadata
 - **Version**: 1.0.0
-- **Status**: Draft
+- **Status**: Active
 - **Author**: Spec-Write Agent
 - **Created**: 2026-02-16
 - **Last Updated**: 2026-02-16
@@ -629,3 +629,4 @@ The following are explicitly out of scope for v1.0.0:
 |------------|---------|-------------------|------------------|
 | 2026-02-16 | 1.0.0   | Initial draft     | Spec-Write Agent |
 | 2026-02-16 | 1.0.0   | Revised based on feasibility study: OSC 52 clipboard, test steps, terminal notes | Spec-Write Agent |
+| 2026-02-16 | 1.0.0   | Activated for implementation | Spec-Write Agent |
