@@ -89,7 +89,7 @@
 
 #### Compatibility
 - **NFR-4**: Works with tmux 3.2+
-- **NFR-5**: Compatible with common terminal emulators (Alacritty, Kitty, WezTerm, etc.)
+- **NFR-5**: Requires terminal with OSC 52 clipboard support (Kitty, Alacritty, iTerm2, Foot, etc.)
 - **NFR-6**: OSC 52 clipboard works over SSH when terminal supports it
 
 #### Usability
@@ -180,13 +180,24 @@ setw -g mode-keys vi
 # 256 colors + true color
 set -g default-terminal "screen-256color"
 set -ga terminal-overrides ",*256col*:Tc"
+
+# Extended keys for better modifier support
+set -s extended-keys on
 ```
 
 #### Clipboard (OSC 52)
 ```conf
+# Enable OSC 52 clipboard (works in Kitty, Alacritty, iTerm2, etc.)
 set -g set-clipboard on
-bind -T copy-mode-vi y send -X copy-pipe-and-cancel "xclip -in -selection clipboard"
+
+# SSH passthrough for OSC 52
+set -g allow-passthrough on
+
+# Vi-mode copy using OSC 52
+bind -T copy-mode-vi y send -X copy-pipe-and-cancel ""
 ```
+
+> **Note**: OSC 52 is a terminal escape sequence that enables clipboard access without external tools. The terminal emulator handles clipboard operations natively.
 
 #### Layout Strategy
 - Default layout: `main-vertical` (60% left for editor, 40% right for terminals)
@@ -223,7 +234,10 @@ tmux -V  # Should be 3.2+
 # Verify required tools
 which fzf      # For sessionx
 which zoxide   # For directory jumping
-which xclip    # For clipboard (Linux)
+
+# Verify terminal OSC 52 support (optional)
+# In Kitty: should work by default
+# In Alacritty: add to alacritty.yml: "terminal.osc52: CopyPaste"
 ```
 
 ### Installation Test
@@ -326,9 +340,33 @@ z add ~/projects/project-b
 # Select to create/jump to session
 ```
 
+#### Test 6: Resize Mode
+```bash
+tmux new -s resize-test
+
+# Press Alt+r to enter resize mode
+# Press h/j/k/l to resize pane
+# Press Escape to exit resize mode
+
+# Cleanup
+tmux kill-session -t resize-test
+```
+
+#### Test 7: Kill Pane
+```bash
+tmux new -s kill-test
+
+# Split pane: Alt+v
+# Press Alt+Shift+q to kill pane
+# Pane should close
+
+# Cleanup
+tmux kill-session -t kill-test
+```
+
 ### Edge Case Tests
 
-#### Test 6: Escape Timing
+#### Test 8: Escape Timing
 ```bash
 # Open vim in tmux
 vim test.txt
@@ -340,7 +378,7 @@ vim test.txt
 # Should exit insert and move down immediately
 ```
 
-#### Test 7: SSH Session
+#### Test 9: SSH Session
 ```bash
 # SSH to remote machine with tmux config synced
 ssh user@remote
@@ -350,7 +388,7 @@ ssh user@remote
 # Should sync to local clipboard via OSC 52
 ```
 
-#### Test 8: Multi-Window Workflow
+#### Test 10: Multi-Window Workflow
 ```bash
 tmux new -s multi-test
 
@@ -552,20 +590,27 @@ Scenario: Windows and panes start at index 1
 - **tmux** >= 3.2
 - **TPM** (Tmux Plugin Manager)
 - **fzf** (for fuzzy finding)
+- **Terminal with OSC 52 support** (Kitty, Alacritty, iTerm2, Foot, etc.)
 
 ### Recommended
 - **zoxide** (for smart directory jumping)
-- **xclip** or **xsel** (for clipboard on Linux)
-- **wl-copy/wl-paste** (for clipboard on Wayland)
 
 ### Terminal Compatibility
-- Alacritty
-- Kitty
-- WezTerm
-- Foot
-- Ghostty
-- iTerm2 (macOS)
-- Windows Terminal (WSL)
+
+> **Important**: Terminal must support OSC 52 clipboard sequences for copy/paste functionality.
+
+### OSC 52 Clipboard Support
+
+| Terminal      | OSC 52 Support | Notes                    |
+| ------------- | -------------- | ------------------------ |
+| Kitty         | ✅ Yes         | User's terminal          |
+| Alacritty     | ✅ Yes         | Requires config          |
+| iTerm2        | ✅ Yes         | Default enabled          |
+| Foot          | ✅ Yes         | Wayland native           |
+| WezTerm       | ⚠️ Partial     | Copy works, paste limited |
+| Ghostty       | ✅ Yes         | Default enabled          |
+| Hyper         | ❌ No          | Not recommended          |
+| Konsole       | ⚠️ Partial     | May need config          |
 
 ## Out of Scope
 
@@ -583,3 +628,4 @@ The following are explicitly out of scope for v1.0.0:
 | Date       | Version | Description       | Author           |
 |------------|---------|-------------------|------------------|
 | 2026-02-16 | 1.0.0   | Initial draft     | Spec-Write Agent |
+| 2026-02-16 | 1.0.0   | Revised based on feasibility study: OSC 52 clipboard, test steps, terminal notes | Spec-Write Agent |
