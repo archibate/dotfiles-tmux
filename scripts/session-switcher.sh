@@ -76,7 +76,7 @@ session_picker() {
             --header='ENTER to attach | Ctrl-N to create new session | ESC to close' \
             --delimiter='\t' \
             --with-nth=1 \
-            --preview="$HOME/.config/tmux/scripts/session_preview.sh {+}" \
+            --preview="$HOME/.config/tmux/scripts/session-preview.sh {+}" \
             --preview-window='right:50%:border-left' \
             --height=100% \
             --border=rounded \
