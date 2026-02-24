@@ -133,6 +133,7 @@ TPM_PATH="$HOME/.tmux/plugins/tpm"
 if [[ ! -d "$TPM_PATH" ]]; then
     print_info "Installing TPM (Tmux Plugin Manager)..."
     git clone https://github.com/tmux-plugins/tpm "$TPM_PATH"
+    $TPM_PATH/scripts/install_plugins.sh
     print_success "TPM installed"
 else
     print_success "TPM already installed"
@@ -153,11 +154,11 @@ ln -s "$SCRIPT_DIR/.tmux.conf" "$TMUX_CONF"
 print_success ".tmux.conf symlinked"
 
 # Copy scripts to ~/.config/tmux/scripts/
-print_info "Installing helper scripts..."
-cp "$SCRIPT_DIR/scripts/zoxide-jump.sh" "$HOME/.config/tmux/scripts/"
-cp "$SCRIPT_DIR/scripts/session-switcher.sh" "$HOME/.config/tmux/scripts/"
-chmod +x "$HOME/.config/tmux/scripts/"*.sh
-print_success "Scripts installed to ~/.config/tmux/scripts/"
+# print_info "Installing helper scripts..."
+# cp "$SCRIPT_DIR/scripts/zoxide-jump.sh" "$HOME/.config/tmux/scripts/"
+# cp "$SCRIPT_DIR/scripts/session-switcher.sh" "$HOME/.config/tmux/scripts/"
+# chmod +x "$HOME/.config/tmux/scripts/"*.sh
+# print_success "Scripts installed to ~/.config/tmux/scripts/"
 
 # ============================================================================
 # Post-installation Instructions
