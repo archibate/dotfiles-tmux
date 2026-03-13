@@ -14,5 +14,8 @@ else
     tmux capture-pane -p -S - -E - > "$temp_file"
 fi
 
+# Remove trailing empty lines
+sed -i -e :a -e '/^[[:space:]]*$/{$d;N;};/\n$/ba' "$temp_file"
+
 # Open in popup window with nvim, cleanup on exit
-tmux popup -E "nvim $temp_file; rm -f $temp_file"
+tmux popup -E -w 80% -h 80% "nvim '$temp_file' +\\\$; rm -f '$temp_file'"
