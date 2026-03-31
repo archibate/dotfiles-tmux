@@ -47,51 +47,34 @@ No prefix mode - direct key binding
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + Enter` | New Pane | Create new pane (auto layout) |
-| `Alt + s` | Horizontal Split | Switch to main-horizontal layout |
-| `Alt + v` | Vertical Split | Switch to main-vertical layout |
+| `Alt + \` | Split Horizontal | Create horizontal split |
+| `Alt + -` | Split Vertical | Create vertical split |
+| `Alt + =` | Popup Terminal | Open popup in current directory |
+| `Alt + s` | Main-Horizontal | Switch to main-horizontal layout |
+| `Alt + Shift + v` | Even-Vertical | Switch to even-vertical layout |
+| `Alt + Shift + s` | Even-Horizontal | Switch to even-horizontal layout |
+| `Alt + Shift + t` | Tiled | Switch to tiled layout |
 | `Alt + z` | Zoom Toggle | Toggle pane fullscreen |
 
 ### Layout Preview
 
 ```
-main-vertical (Alt+v):      main-horizontal (Alt+s):
+even-vertical (M-S-v):      main-horizontal (M-s):
 ┌──────────┬──────┐        ┌──────────────────────┐
 │          │      │        │                      │
-│  Main    │ Pane │        │        Main          │
-│  (60%)   │(40%) │        │        (60%)         │
+│  Pane 1  │Pane 2│        │        Main          │
+│  (50%)   │(50%) │        │        (60%)         │
 │          │      │        ├──────────────────────┤
 │          │      │        │   Pane  │   Pane    │
 └──────────┴──────┘        │  (40%)  │   (40%)   │
                             └─────────────────────┘
 ```
 
-### Resize Mode
-
-| Keybinding | Action | Description |
-|------------|--------|-------------|
-| `Alt + r` | Enter Resize | Enter resize mode |
-
-**Inside Resize Mode:**
-
-| Keybinding | Action |
-|------------|--------|
-| `h` | Resize pane left (+5) |
-| `j` | Resize pane down (+5) |
-| `k` | Resize pane up (+5) |
-| `l` | Resize pane right (+5) |
-| `H` | Resize pane left (+10) |
-| `J` | Resize pane down (+10) |
-| `K` | Resize pane up (+10) |
-| `L` | Resize pane right (+10) |
-| `Escape` | Exit resize mode |
-| `Enter` | Exit resize mode |
-
 ### Closing
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + Shift + q` | Kill Pane | Close current pane (with confirmation) |
+| `Alt + d` | Kill Pane | Close current pane |
 
 ---
 
@@ -110,15 +93,6 @@ main-vertical (Alt+v):      main-horizontal (Alt+s):
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + Shift + 1` | Move to Window 1 | Move current pane to window 1 |
-| `Alt + Shift + 2` | Move to Window 2 | Move current pane to window 2 |
-| `Alt + Shift + 3` | Move to Window 3 | Move current pane to window 3 |
-| `Alt + Shift + 4` | Move to Window 4 | Move current pane to window 4 |
-| `Alt + Shift + 5` | Move to Window 5 | Move current pane to window 5 |
-| `Alt + Shift + 6` | Move to Window 6 | Move current pane to window 6 |
-| `Alt + Shift + 7` | Move to Window 7 | Move current pane to window 7 |
-| `Alt + Shift + 8` | Move to Window 8 | Move current pane to window 8 |
-| `Alt + Shift + 9` | Move to Window 9 | Move current pane to window 9 |
 | `Alt + Shift + 0` | Move to Window 10 | Move current pane to window 10 |
 
 ---
@@ -129,17 +103,35 @@ main-vertical (Alt+v):      main-horizontal (Alt+s):
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + d` | Session Popup | Open fuzzy session switcher |
+| `Alt + f` | Session Popup | Open fuzzy session switcher |
+| `Alt + Space` | Sessionx | Sessionx fuzzy finder |
+| `Alt + i` | Last Session | Switch to last used session |
 
 ### Zoxide Integration
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + o` | Zoxide Popup | Open zoxide directory picker |
+| `Alt + g` | Zoxide Popup | Open zoxide directory picker |
+
+### Utilities
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Alt + e` | Capture Edit | Capture and edit command output |
 
 ### Session Persistence
 
 Sessions are automatically saved every 15 minutes and restored when tmux starts.
+
+---
+
+## Window Navigation
+
+| Keybinding | Action | Description |
+|------------|--------|-------------|
+| `Alt + Tab` | Last Window | Switch to last active window |
+| `Alt + Left` | Previous Window | Switch to previous window |
+| `Alt + Right` | Next Window | Switch to next window |
 
 ---
 
@@ -149,8 +141,11 @@ Sessions are automatically saved every 15 minutes and restored when tmux starts.
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + [` | Enter Copy | Enter copy mode |
-| `q` | Exit Copy | Exit copy mode |
+| `Alt + Up` | Enter Copy | Enter copy mode and scroll up |
+| `Alt + Down` | Enter Copy | Enter copy mode |
+| `Alt + PageUp` | Enter Copy | Enter copy mode and page up |
+| `Enter` | Enter Copy | Enter copy mode |
+| `i / a / q / Escape` | Exit Copy | Exit copy mode |
 
 ### Navigation (Copy Mode)
 
@@ -182,7 +177,7 @@ Sessions are automatically saved every 15 minutes and restored when tmux starts.
 
 | Keybinding | Action | Description |
 |------------|--------|-------------|
-| `Alt + p` | Paste | Paste from tmux buffer (FR-23) |
+| `Alt + p` | Paste | Paste from tmux buffer |
 
 ---
 
@@ -194,13 +189,16 @@ Sessions are automatically saved every 15 minutes and restored when tmux starts.
 ├─────────────────────────────────────────────────────────────┤
 │  NAVIGATION          │  PANE MGMT         │  SESSION        │
 │  ─────────────       │  ────────────      │  ──────────     │
-│  Alt+h/j/k/l  Focus  │  Alt+Enter  New    │  Alt+d  Switch  │
-│  Alt+0-9      Window │  Alt+s/v    Layout │  Alt+o  Zoxide  │
-│                      │  Alt+z      Zoom   │                 │
-│  PANE MOVE           │  Alt+r      Resize │  CLOSE          │
-│  ──────────          │  Alt+Shift+q Kill  │  ──────         │
-│  Alt+Shift+hjkl Swap │                    │  Alt+Shift+q    │
-│  Alt+Shift+0-9  Move │                    │                 │
+│  Alt+h/j/k/l  Focus  │  Alt+\  Split H    │  Alt+f  Switch  │
+│  Alt+0-9      Window │  Alt+-  Split V    │  Alt+g  Zoxide  │
+│  Alt+Tab      Last   │  Alt+=  Popup      │  Alt+e  Capture │
+│  Alt+←/→      Prev/  │  Alt+s   Main-H    │  Alt+i  Last    │
+│               Next   │  Alt+S-v Even-V    │                 │
+│                      │  Alt+S-s Even-H    │  CLOSE          │
+│  PANE MOVE           │  Alt+S-t Tiled     │  ──────         │
+│  ──────────          │  Alt+z   Zoom      │  Alt+d  Kill    │
+│  Alt+Shift+hjkl Swap │  Alt+d   Kill      │                 │
+│  Alt+Shift+0   Move  │                    │                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -210,6 +208,7 @@ Sessions are automatically saved every 15 minutes and restored when tmux starts.
 
 1. **Quick Window Switch**: Use `Alt+1` through `Alt+9` for instant window access
 2. **Zoom Focus**: Press `Alt+z` to focus on a single pane, press again to restore
-3. **Resize Quickly**: `Alt+r` then hold `h/j/k/l` for continuous resizing
-4. **Session Jump**: `Alt+d` shows all sessions with fuzzy search
-5. **Project Jump**: `Alt+o` uses zoxide for smart project switching
+3. **Layout Switching**: `Alt+s` for main-horizontal, `Alt+Shift+v` for even-vertical
+4. **Session Jump**: `Alt+f` shows all sessions with fuzzy search
+5. **Project Jump**: `Alt+g` uses zoxide for smart project switching
+6. **Window Cycling**: `Alt+Left/Right` to cycle through windows, `Alt+Tab` for last window

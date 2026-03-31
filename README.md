@@ -114,46 +114,64 @@ tmux new -s test
 
 | Keybinding | Action |
 |------------|--------|
-| `Alt + Enter` | Create new pane |
+| `Alt + \` | Split horizontal |
+| `Alt + -` | Split vertical |
+| `Alt + =` | Popup terminal in current path |
 | `Alt + s` | Main-horizontal layout |
-| `Alt + v` | Main-vertical layout |
+| `Alt + Shift + v` | Even-vertical layout |
+| `Alt + Shift + s` | Even-horizontal layout |
+| `Alt + Shift + t` | Tiled layout |
 | `Alt + z` | Toggle fullscreen (zoom) |
-| `Alt + r` | Enter resize mode |
-| `Alt + Shift + q` | Kill current pane |
+| `Alt + d` | Kill current pane |
 
 ### Pane Movement
 
 | Keybinding | Action |
 |------------|--------|
-| `Alt + Shift + h` | Move pane left |
-| `Alt + Shift + j` | Move pane down |
-| `Alt + Shift + k` | Move pane up |
-| `Alt + Shift + l` | Move pane right |
-| `Alt + Shift + 0-9` | Move pane to window 0-9 |
+| `Alt + Shift + h` | Swap pane left |
+| `Alt + Shift + j` | Swap pane down |
+| `Alt + Shift + k` | Swap pane up |
+| `Alt + Shift + l` | Swap pane right |
+| `Alt + Shift + 0` | Move pane to window 10 |
 
 ### Session Management
 
 | Keybinding | Action |
 |------------|--------|
-| `Alt + d` | Open session switcher popup |
-| `Alt + o` | Open zoxide directory picker |
-| `Alt + [` | Enter copy mode |
+| `Alt + f` | Open session switcher popup |
+| `Alt + g` | Open zoxide directory picker |
+| `Alt + e` | Capture and edit command output |
+| `Alt + i` | Switch to last used session |
+| `Alt + Space` | Sessionx fuzzy finder |
 
-### Resize Mode (after `Alt + r`)
+### Window Navigation
 
 | Keybinding | Action |
 |------------|--------|
-| `h / j / k / l` | Resize pane (5 cells) |
-| `H / J / K / L` | Resize pane (10 cells) |
-| `Escape / Enter` | Exit resize mode |
+| `Alt + 0-9` | Switch to window 0-9 |
+| `Alt + Tab` | Switch to last window |
+| `Alt + Left` | Switch to previous window |
+| `Alt + Right` | Switch to next window |
 
 ### Copy Mode
 
 | Keybinding | Action |
 |------------|--------|
+| `Alt + Up` | Enter copy mode and scroll up |
+| `Alt + Down` | Enter copy mode |
+| `Alt + PageUp` | Enter copy mode and page up |
+| `Enter` | Enter copy mode |
+| `Alt + p` | Paste from buffer |
+
+#### Inside Copy Mode
+
+| Keybinding | Action |
+|------------|--------|
 | `v` | Start visual selection |
+| `V` | Select line |
+| `Ctrl + v` | Block selection |
 | `y` | Yank to system clipboard |
-| `q` | Exit copy mode |
+| `i / a / q / Escape` | Exit copy mode |
 
 ## Plugin List
 
