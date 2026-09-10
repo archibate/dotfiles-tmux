@@ -1,0 +1,13 @@
+[Unit]
+Description=Publish the niri display environment to tmux
+BindsTo=niri.service
+After=niri.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=%h/.local/bin/tmux-niri-environment set
+ExecStop=%h/.local/bin/tmux-niri-environment unset
+
+[Install]
+WantedBy=graphical-session.target

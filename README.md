@@ -52,6 +52,7 @@ tmux new -s my-project
 |------------|---------|
 | **zoxide** | Smart directory jumping |
 | **Kitty/Alacritty/iTerm2/Foot** | Terminal with OSC 52 clipboard support |
+| **niri + user systemd** | Keeps tmux's display environment aligned with the niri session |
 
 ### Terminal Compatibility
 
@@ -75,6 +76,10 @@ OSC 52 clipboard support is required for copy/paste functionality:
 git clone <repo-url> ~/.config/tmux-i3-workflow
 ~/.config/tmux-i3-workflow/install.sh
 ```
+
+On niri, the installer also enables a user service that publishes the current
+display environment to the tmux server. SSH clients cannot overwrite it; the
+variables are removed when the niri session stops.
 
 ### Option 2: Manual Installation
 
@@ -213,6 +218,13 @@ set -g @continuum-restore "on"
 set -g @continuum-save-interval "15"
 ```
 
+### Niri Environment Lifecycle
+
+The optional `tmux-niri-environment.service` keeps `DISPLAY`,
+`WAYLAND_DISPLAY`, `NIRI_SOCKET`, and the XDG session variables in tmux's
+server-global environment. `update-environment` stays disabled, so attaching
+from SSH cannot rewrite existing sessions.
+
 ## Project Structure
 
 ```
@@ -220,7 +232,10 @@ tmux-i3-workflow/
 ├── .tmux.conf              # Main configuration file
 ├── README.md               # This file
 ├── install.sh              # Installation script
+├── systemd/
+│   └── tmux-niri-environment.service
 ├── scripts/
+│   ├── niri-environment.sh # Niri/tmux environment bridge
 │   ├── zoxide-jump.sh      # Zoxide directory picker
 │   └── session-switcher.sh # Session switcher wrapper
 └── docs/

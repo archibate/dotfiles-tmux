@@ -44,6 +44,29 @@ print_info() {
     echo -e "${BLUE}→${NC} $1"
 }
 
+install_symlink() {
+    local source="$1"
+    local destination="$2"
+    local label="$3"
+
+    mkdir -p "$(dirname "$destination")"
+
+    if [[ -L "$destination" ]] &&
+       [[ "$(readlink -f "$destination")" == "$(readlink -f "$source")" ]]; then
+        print_success "$label already linked"
+        return
+    fi
+
+    if [[ -e "$destination" || -L "$destination" ]]; then
+        local backup="${destination}.backup.$(date +%Y%m%d%H%M%S)"
+        print_info "Backing up existing $label to $backup"
+        mv "$destination" "$backup"
+    fi
+
+    ln -s "$source" "$destination"
+    print_success "$label linked"
+}
+
 # ============================================================================
 # Prerequisite Checks
 # ============================================================================
@@ -127,6 +150,7 @@ echo "------------------------------"
 print_info "Creating directories..."
 mkdir -p "$HOME/.tmux/plugins"
 mkdir -p "$HOME/.config/tmux/scripts"
+mkdir -p "$HOME/.local/bin"
 
 # Install TPM if not present
 TPM_PATH="$HOME/.tmux/plugins/tpm"
@@ -139,19 +163,34 @@ else
     print_success "TPM already installed"
 fi
 
-# Create symlink for .tmux.conf
-TMUX_CONF="$HOME/.tmux.conf"
-if [[ -L "$TMUX_CONF" ]]; then
-    print_info "Removing existing symlink..."
-    rm "$TMUX_CONF"
-elif [[ -f "$TMUX_CONF" ]]; then
-    print_info "Backing up existing .tmux.conf..."
-    mv "$TMUX_CONF" "$TMUX_CONF.backup.$(date +%Y%m%d%H%M%S)"
-fi
+# Install the tmux config and the stable helper entrypoint used by both tmux
+# and the optional niri lifecycle service.
+install_symlink "$SCRIPT_DIR/.tmux.conf" "$HOME/.tmux.conf" ".tmux.conf"
+install_symlink \
+    "$SCRIPT_DIR/scripts/niri-environment.sh" \
+    "$HOME/.local/bin/tmux-niri-environment" \
+    "niri environment helper"
 
-print_info "Creating symlink for .tmux.conf..."
-ln -s "$SCRIPT_DIR/.tmux.conf" "$TMUX_CONF"
-print_success ".tmux.conf symlinked"
+# Keep niri's display environment in tmux for the compositor lifetime. This is
+# optional so the tmux config remains usable on non-niri systems.
+if command -v niri &> /dev/null && command -v systemctl &> /dev/null; then
+    install_symlink \
+        "$SCRIPT_DIR/systemd/tmux-niri-environment.service" \
+        "$HOME/.config/systemd/user/tmux-niri-environment.service" \
+        "niri environment user service"
+
+    if systemctl --user daemon-reload; then
+        systemctl --user enable tmux-niri-environment.service
+        if systemctl --user is-active --quiet niri.service; then
+            systemctl --user restart tmux-niri-environment.service
+        fi
+        print_success "niri environment user service enabled"
+    else
+        print_warning "user systemd is unavailable; enable tmux-niri-environment.service after login"
+    fi
+else
+    print_info "niri/systemd not detected; skipping the optional environment service"
+fi
 
 # Copy scripts to ~/.config/tmux/scripts/
 # print_info "Installing helper scripts..."
