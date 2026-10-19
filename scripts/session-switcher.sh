@@ -42,16 +42,16 @@ get_session_info() {
 
 # Generate session list for fzf
 generate_session_list() {
-    tmux list-sessions -F '#{session_name} #{session_activity} #{?session_attached,1,0}' 2>/dev/null | \
+    tmux list-sessions -F $'#{session_id}\t#{session_activity}\t#{?session_attached,1,0}\t#{session_name}' 2>/dev/null | \
         sort -rnk2 | \
-        while read -r session activity attached; do
-            # Get session info
-            local windows=$(tmux list-windows -t "$session" 2>/dev/null | wc -l)
+        while IFS=$'\t' read -r session_id activity attached session; do
+            # Use IDs for targets; names are display labels only.
+            local windows=$(tmux list-windows -t "$session_id" 2>/dev/null | wc -l)
             local attached_mark=""
             [[ "$attached" == "1" ]] && attached_mark="*"
 
             # Get first window name for context
-            local first_window_name=$(tmux list-windows -t "$session" -F '#{window_name}' 2>/dev/null | head -1)
+            local first_window_name=$(tmux list-windows -t "$session_id" -F '#{window_name}' 2>/dev/null | head -1)
 
             # Format: session_name* (windows) first_window
             # * indicates attached session
@@ -59,7 +59,7 @@ generate_session_list() {
                 "${session}${attached_mark}" \
                 "$windows" \
                 "$first_window_name" \
-                "$session"
+                "$session_id"
         done
 }
 
@@ -83,7 +83,7 @@ session_picker() {
             --info=inline \
             --print-query \
             --expect=ctrl-n
-    ) > "$temp_file"
+    ) > "$temp_file" || return 0
 
     local query=$(head -1 "$temp_file")
     local key=$(head -2 "$temp_file" | tail -1)
@@ -92,11 +92,12 @@ session_picker() {
     # Ctrl-N was pressed - create new session
     if [[ "$key" == "ctrl-n" ]]; then
         if [[ -n "$query" ]]; then
-            tmux new-session -d -s "$query" 2>/dev/null
+            local session_id
+            session_id=$(tmux new-session -d -P -F '#{session_id}' -s "$query") || return
             if [[ -n "$TMUX" ]]; then
-                tmux switch-client -t "$query"
+                tmux switch-client -t "$session_id"
             else
-                tmux attach-session -t "$query"
+                tmux attach-session -t "$session_id"
             fi
         fi
         return
@@ -107,17 +108,15 @@ session_picker() {
         return
     fi
 
-    # Extract session name and switch
-    local session=$(echo "$selected" | cut -f2)
-    if [[ -n "$session" ]]; then
-        # Remove the * suffix if present
-        session="${session%\*}"
-
+    # Extract the hidden session ID and switch without interpreting the name.
+    local session_id
+    session_id=$(printf '%s\n' "$selected" | cut -f2)
+    if [[ "$session_id" =~ ^\$[0-9]+$ ]]; then
         # Use attach-session if outside tmux, switch-client if inside
         if [[ -n "$TMUX" ]]; then
-            tmux switch-client -t "$session"
+            tmux switch-client -t "$session_id"
         else
-            tmux attach-session -t "$session"
+            tmux attach-session -t "$session_id"
         fi
     fi
 }

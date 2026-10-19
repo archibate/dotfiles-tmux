@@ -2,16 +2,16 @@
 # session_preview.sh - Preview session content for fzf
 
 selected="$1"
-session=$(echo "$selected" | cut -f2)
-# Remove * suffix if present
-session="${session%\*}"
+session=$(printf '%s\n' "$selected" | cut -f2)
 
-if [[ -n "$session" ]]; then
+if [[ "$session" =~ ^\$[0-9]+$ ]]; then
+    # Resolve the display name, but use the ID for every target.
+    session_name=$(tmux display-message -t "$session" -p '#{session_name}' 2>/dev/null) || exit 0
     # Get session info header
     windows=$(tmux list-windows -t "$session" 2>/dev/null | wc -l)
     attached=$(tmux display-message -t "$session" -p '#{?session_attached,attached,detached}' 2>/dev/null)
 
-    printf "#[bold]%s#[nobold] (%d windows, %s)\n\n" "$session" "$windows" "$attached"
+    printf "#[bold]%s#[nobold] (%d windows, %s)\n\n" "$session_name" "$windows" "$attached"
 
     # List windows in this session
     tmux list-windows -t "$session" -F '#{window_index}: #{window_name} (#{window_panes} panes)' 2>/dev/null | \
